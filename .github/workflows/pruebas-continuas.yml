@@ -1,0 +1,34 @@
+﻿name: Pruebas continuas Docker Skills
+
+on:
+  push:
+    branches:
+      - pruebas-continuas
+
+permissions:
+  contents: read
+
+jobs:
+  validacion:
+    name: Pruebas y validacion del repositorio
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Descargar la revision a evaluar
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Registrar version y entorno
+        run: |
+          git rev-parse HEAD
+          docker version
+          uname -a
+
+      - name: Ejecutar pruebas y controles existentes
+        shell: bash
+        env:
+          VERSION_CHECK_BASE_SHA: f79172733725e2fd236343ee7b963c446ed85d09
+        run: bash scripts/ci.sh
