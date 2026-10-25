@@ -8,6 +8,12 @@ for distribution releases.
 
 ## [Unreleased]
 
+### Added
+
+- Added five isolated CLI integration tests for link-checker failure detection
+  and recovery, plus an academic evidence workflow running them in Docker and
+  then running the complete regression suite.
+
 ## [0.3.1] - 2026-09-29
 
 ### Added

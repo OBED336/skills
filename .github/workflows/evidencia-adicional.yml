@@ -1,0 +1,36 @@
+name: Evidencia adicional Docker Skills
+
+on:
+  push:
+    branches: [evidencia-adicional]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pruebas:
+    name: Errores controlados y regresion en Docker
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Identificar revision y entorno
+        run: |
+          git rev-parse HEAD
+          docker version
+      - name: Cinco pruebas nuevas de fallo y recuperacion
+        run: |
+          docker run --rm --network none \
+            -e PYTHONDONTWRITEBYTECODE=1 \
+            -v "$GITHUB_WORKSPACE:/work:ro" -w /work \
+            python@sha256:739e7213785e88c0f702dcdc12c0973afcbd606dbf021a589cab77d6b00b579d \
+            python3 -m unittest discover -s scripts -p test_evidencia_enlaces.py -v
+      - name: Suite completa de regresion
+        env:
+          VERSION_CHECK_BASE_SHA: f511581d345050597bb8defb0bda96cfa919cbf2
+        run: bash scripts/ci.sh
